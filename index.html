@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Love Journey 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* GENERAL BODY */
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  color:white;
+  overflow:hidden;
+  background: linear-gradient(135deg, #ff5c7c, #9b59b6);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  text-align:center;
+}
+
+/* Gradient animation */
+@keyframes gradientShift {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+
+/* === STAGE 1: Will You Be Mine === */
+#stage1{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  width:100%;
+}
+
+.card{
+  width:700px;
+  padding:80px 60px;
+  background:rgba(255,255,255,0.2);
+  border-radius:30px;
+  text-align:center;
+  position:relative;
+}
+
+.card h1{
+  font-size:2.5rem;
+  margin-bottom:60px;
+}
+
+/* Button row inside card */
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  padding:0 20px;
+}
+
+/* Buttons */
+button{
+  padding:16px 50px;
+  font-size:20px;
+  border:none;
+  border-radius:40px;
+  cursor:pointer;
+  z-index:5;
+  transition: transform 0.2s;
+}
+button:hover{transform:scale(1.05);}
+
+.yes{background:#22c55e;color:white;}
+.no{
+  background:#ef4444;color:white;
+  position:fixed;
+  z-index:10;
+  transition:left 0.3s ease, top 0.3s ease;
+}
+
+/* === STAGE 2: Gifts === */
+#stage2{display:none;}
+.gifts-container{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:30px;
+  margin-top:40px;
+}
+.gift{
+  background:rgba(255,255,255,0.1);
+  width:250px;
+  padding:40px 20px;
+  border-radius:25px;
+  cursor:pointer;
+  box-shadow:0 10px 20px rgba(0,0,0,0.3);
+  transition:0.3s;
+  font-size:48px;
+}
+.gift:hover{background:rgba(255,255,255,0.2);transform:scale(1.05);}
+.gift p{margin-top:15px;font-size:16px;font-style:italic;color:#ffd1dc;}
+
+.quiz-container,
+.loveletter-container,
+.gallery-container{
+  display:none;
+  max-width:600px;
+  margin:30px auto;
+  background:rgba(255,255,255,0.1);
+  padding:30px;
+  border-radius:25px;
+}
+.quiz-question{font-size:18px;margin:15px 0 10px 0;}
+.quiz-options button{display:block;margin:10px auto;width:80%;background:#ef4444;color:white;}
+.feedback{margin-top:20px;font-size:18px;font-weight:bold;}
+.loveletter-container{text-align:left;line-height:1.6;font-size:18px;}
+.loveletter-container h2{text-align:center;margin-bottom:20px;}
+.gallery-container{display:none;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;}
+.gallery-container img{width:100%;border-radius:20px;object-fit:cover;transition:transform 0.3s;}
+.gallery-container img:hover{transform:scale(1.05);}
+
+.back-btn,.finally-btn{
+  margin:60px 10px;
+  background:#22c55e;
+  color:white;
+  padding:10px 20px;
+  border-radius:12px;
+}
+.finally-btn{background:#ef4444;}
+.finally-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* === STAGE 3: Love Album === */
+#stage3{display:none;position:relative;width:100vw;height:100vh;}
+.video-box{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:60%;max-width:600px;
+  aspect-ratio:16/9;
+  border-radius:25px;
+  overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,0.5);
+  z-index:10;
+}
+video{width:100%;height:100%;object-fit:cover;}
+.photo{
+  position:absolute;
+  width:200px;height:200px;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+  z-index:11;
+}
+.photo img{width:100%;height:100%;object-fit:cover;}
+
+/* Heart rain (all stages) */
+.heart{
+  position:fixed;
+  top:-30px;
+  font-size:20px;
+  animation:fall linear forwards;
+  pointer-events:none;
+}
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- STAGE 1: Will You Be Mine -->
+<div id="stage1">
+  <div class="card">
+    <h1>Will you be mine? 💖</h1>
+    <div class="row">
+      <button class="yes" id="yesBtn">YES ❤️</button>
+      <div id="noHolder" style="width:130px;"></div>
+    </div>
+  </div>
+  <button class="no" id="noBtn">NO 💔</button>
+</div>
+
+<!-- STAGE 2: Gifts -->
+<div id="stage2">
+  <h1>Choose Your Gift 🎁</h1>
+  <div class="gifts-container">
+    <div class="gift" id="gift1">🎓<p>Quiz Gift</p></div>
+    <div class="gift" id="gift2">💌<p>Love Letter</p></div>
+    <div class="gift" id="gift3">🖼️<p>Gallery</p></div>
+  </div>
+  <button class="finally-btn" id="finallyBtn" disabled>Finally ❤️</button>
+
+  <!-- Quiz -->
+  <div class="quiz-container" id="quizContainer">
+    <h2>Quiz Time! 🎓</h2>
+    <div id="quizQuestion"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="feedback" id="quizFeedback"></div>
+    <button class="back-btn" onclick="backToGifts()">Back</button>
+  </div>
+
+  <!-- Love Letter -->
+  <div class="loveletter-container" id="loveLetter">
+    <h2>My Love 💖</h2>
+    <p>From the moment I met you, my world became brighter...</p>
+    <p>Every smile, every laugh, every moment with you is a treasure...</p>
+    <p>You are my heart, my joy, my everything...</p>
+    <button class="back-btn" onclick="backToGifts()">Back</button>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery-container" id="gallery">
+    <img src="images (1).jpg" alt="">
+    <img src="images (2).jpg" alt="">
+    <img src="images (3).jpg" alt="">
+    <img src="images (6).jpg" alt="">
+    <img src="images (1).jpg" alt="">
+    <img src="images (2).jpg" alt="">
+    <button class="back-btn" onclick="backToGifts()">Back</button>
+  </div>
+</div>
+
+<!-- STAGE 3: Love Album -->
+<div id="stage3">
+  <audio id="bgMusic" src="yanji.mp3" autoplay loop></audio>
+  <div class="video-box">
+    <video src="mixkit-lovers-walking-through-a-lavender-field-4530-4k.mp4" autoplay loop muted></video>
+  </div>
+  <div class="photo" id="photo1"><img src="images (1).jpg"></div>
+  <div class="photo" id="photo2"><img src="images (2).jpg"></div>
+  <div class="photo" id="photo3"><img src="images (3).jpg"></div>
+  <div class="photo" id="photo4"><img src="images (6).jpg"></div>
+  <div class="photo" id="photo5"><img src="images (1).jpg"></div>
+  <div class="photo" id="photo6"><img src="images (2).jpg"></div>
+  <div class="photo" id="photo7"><img src="images (3).jpg"></div>
+  <div class="photo" id="photo8"><img src="images (6).jpg"></div>
+</div>
+
+<script>
+/* === STAGE 1 LOGIC === */
+const yesBtn = document.getElementById("yesBtn");
+const noBtn  = document.getElementById("noBtn");
+
+function lockNo(){
+  const cardRect = document.querySelector(".card").getBoundingClientRect();
+  const yesRect = yesBtn.getBoundingClientRect();
+  const padding = 100; 
+  noBtn.style.left = (cardRect.right - noBtn.offsetWidth - padding) + "px";
+  noBtn.style.top  = yesRect.top + "px";
+  noBtn.style.position="fixed";
+}
+window.addEventListener("load", lockNo);
+window.addEventListener("resize", lockNo);
+
+noBtn.addEventListener("mouseenter", ()=>{
+  const pad = 20;
+  const w = noBtn.offsetWidth;
+  const h = noBtn.offsetHeight;
+  const maxX = window.innerWidth - w - pad;
+  const maxY = window.innerHeight - h - pad;
+  const minX = pad, minY = pad;
+  let x = Math.random()*(maxX-minX)+minX;
+  let y = Math.random()*(maxY-minY)+minY;
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+});
+
+yesBtn.onclick = ()=>{
+  document.getElementById("stage1").style.display="none";
+  document.getElementById("stage2").style.display="block";
+};
+
+/* === STAGE 2 LOGIC === */
+const gift1=document.getElementById("gift1");
+const gift2=document.getElementById("gift2");
+const gift3=document.getElementById("gift3");
+const giftsContainer=document.querySelector(".gifts-container");
+const quizContainer=document.getElementById("quizContainer");
+const loveLetter=document.getElementById("loveLetter");
+const gallery=document.getElementById("gallery");
+const finallyBtn=document.getElementById("finallyBtn");
+
+let giftsVisited = {quiz:false, letter:false, gallery:false};
+
+gift1.addEventListener("click",()=>{
+  giftsContainer.style.display="none";
+  quizContainer.style.display="block";
+});
+gift2.addEventListener("click",()=>{
+  giftsContainer.style.display="none";
+  loveLetter.style.display="block";
+  giftsVisited.letter=true;
+});
+gift3.addEventListener("click",()=>{
+  giftsContainer.style.display="none";
+  gallery.style.display="grid";
+  giftsVisited.gallery=true;
+  checkFinally();
+});
+
+function backToGifts(){
+  giftsContainer.style.display="flex";
+  quizContainer.style.display="none";
+  loveLetter.style.display="none";
+  gallery.style.display="none";
+  document.getElementById("quizFeedback").innerText="";
+  checkFinally();
+}
+
+/* Quiz */
+const quizQuestions=[
+  {q:"What is the color of love?",options:["Blue","Red","Green","Yellow"],answer:"Red"},
+  {q:"Which animal symbolizes love?",options:["Cat","Dog","Dove","Elephant"],answer:"Dove"},
+  {q:"What is considered the language of love?",options:["English","French","Body Language","Math"],answer:"Body Language"},
+  {q:"Which flower is most associated with love?",options:["Rose","Tulip","Lily","Sunflower"],answer:"Rose"},
+  {q:"What day is celebrated as Valentine's Day?",options:["Feb 14","Mar 14","Jan 14","Apr 14"],answer:"Feb 14"}
+];
+let currentQuestion = 0;
+const quizQuestionDiv=document.getElementById("quizQuestion");
+const quizOptionsDiv=document.getElementById("quizOptions");
+const quizFeedbackDiv=document.getElementById("quizFeedback");
+
+function loadQuestion(){
+  quizFeedbackDiv.innerText="";
+  const q = quizQuestions[currentQuestion];
+  quizQuestionDiv.innerText = `${currentQuestion+1}. ${q.q}`;
+  quizOptionsDiv.innerHTML="";
+  q.options.forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.innerText=opt;
+    btn.addEventListener("mouseenter",()=>{
+      quizFeedbackDiv.innerText = opt===q.answer ? "Haaa! ✅ Correct, awesome ❤️" : "Oops! ❌ Nope, try again 💔";
+    });
+    btn.addEventListener("click",()=>{
+      if(opt===q.answer){
+        currentQuestion++;
+        if(currentQuestion<quizQuestions.length){
+          setTimeout(loadQuestion,300);
+        } else {
+          giftsVisited.quiz=true;
+          currentQuestion=0;
+          setTimeout(backToGifts,500);
+        }
+      }
+    });
+    quizOptionsDiv.appendChild(btn);
+  });
+}
+gift1.addEventListener("click", loadQuestion);
+
+function checkFinally(){
+  if(giftsVisited.quiz && giftsVisited.letter && giftsVisited.gallery){
+    finallyBtn.disabled=false;
+  }
+}
+finallyBtn.addEventListener("click",()=>{
+  if(!finallyBtn.disabled){
+    document.getElementById("stage2").style.display="none";
+    document.getElementById("stage3").style.display="block";
+  }
+});
+
+/* === STAGE 3 LOGIC === */
+const bgMusic = document.getElementById("bgMusic");
+document.body.addEventListener("click",()=>{ bgMusic.play(); });
+
+const photos = [
+  document.getElementById("photo1"),
+  document.getElementById("photo2"),
+  document.getElementById("photo3"),
+  document.getElementById("photo4"),
+  document.getElementById("photo5"),
+  document.getElementById("photo6"),
+  document.getElementById("photo7"),
+  document.getElementById("photo8")
+];
+
+const centerX = window.innerWidth/2;
+const centerY = window.innerHeight/2;
+const radiusX = 500;
+const radiusY = 420;
+let angles = photos.map((_,i)=> i*(360/photos.length));
+const speed = 0.3;
+
+function animate(){
+  photos.forEach((photo,i)=>{
+    const rad = angles[i]*Math.PI/180;
+    const x = centerX + radiusX*Math.cos(rad) - photo.offsetWidth/2;
+    const y = centerY + radiusY*Math.sin(rad) - photo.offsetHeight/2;
+    photo.style.left = x + "px";
+    photo.style.top = y + "px";
+    angles[i]+=speed;
+    if(angles[i]>=360) angles[i]-=360;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* HEART RAIN ALL STAGES */
+const colors = ["#ff5c5c","#ff9a9e","#ffd1dc","#ff85a1","#fcd34d","#f87171"];
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*window.innerWidth+"px";
+  h.style.color = colors[Math.floor(Math.random()*colors.length)];
+  h.style.fontSize=(Math.random()*20+15)+"px";
+  h.style.animationDuration=(Math.random()*3+4)+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),9000);
+},200);
+</script>
+
+</body>
+</html>
